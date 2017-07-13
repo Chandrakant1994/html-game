@@ -4,9 +4,10 @@ xv = yv = 0;
 grav = 0.5;
 holdleft = holdright = false;
 onG = false;
+onP = false;
 plats = [];
 obstacles = [];
-framesPerSecond = 30;
+framesPerSecond = 40;
 var platform, plat1, plat2;
 
 window.onload = function () {
@@ -43,7 +44,10 @@ function update() {
 
 
     if (onG) {
-        xv *= 0.8;              // adding friction when onG
+        xv *= 0.8;
+        if(onP){
+        player.x +=3;
+        }              // adding friction when onG
     } else {
         yv += grav;            // add gravity while not onG
     }
@@ -51,13 +55,17 @@ function update() {
     onG = false;                //on ground set false by default
 
     // check whether player is in a platform
-
-    if (player.x > plats[0].x && player.x < plats[0].x + plats[0].width && player.y > plats[0].y && player.y < plats[0].y + plats[0].height) {
-        player.y = plats[0].y;
+    for(i = 0 ; i < plats.length ; i++){
+    if (player.x >= plats[i].x && player.x < (plats[i].x + plats[i].width) && player.y >= plats[i].y && player.y < (plats[i].y + plats[i].height)) {
+        player.y = plats[i].y;
         onG = true;
+        if(i>0){
+        onP = true;
+        }
+    }
     }
     if (frameNo % 50 == 0) {
-        obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random()*(300 - 100)+100), "#ecf0f1", 100, 10));
+        obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random()*(300 - 100)), "#ecf0f1", 100, 10));
         obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random()*(300 - 100)+100), "black", 3, 3));
     }
 
@@ -73,6 +81,7 @@ function update() {
     for(i = 0 ; i< obstacles.length ; i++){
         obstacles[i].x += 3;
         obstacles[i].update();
+        plats.push(obstacles[i]);
     }
     
     //drawEverything();
