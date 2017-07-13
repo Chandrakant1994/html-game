@@ -31,15 +31,15 @@ window.onload = function () {
 
 function update() {
     frameNo++;
-
+    
     if (holdleft) {
         xv = -3;
     }
     if (holdright) {
         xv = 3;      
     }
-    px += xv;
-    py += yv;
+    player.x += xv;
+    player.y += yv;
 
 
     if (onG) {
@@ -52,41 +52,49 @@ function update() {
 
     // check whether player is in a platform
 
-    if (px > plats[0].x && px < plats[0].x + plats[0].width && py > plats[0].y && py < plats[0].y + plats[0].height) {
-        py = plats[0].y;
+    if (player.x > plats[0].x && player.x < plats[0].x + plats[0].width && player.y > plats[0].y && player.y < plats[0].y + plats[0].height) {
+        player.y = plats[0].y;
         onG = true;
     }
-/*    if (frameNo % 5 == 0) {
-        obstacles.push = new component(100, (canv.height / 2) - 200, "#ecf0f1", 100, 10);
+    if (frameNo % 50 == 0) {
+        obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random()*(300 - 100)+100), "#ecf0f1", 100, 10));
+        obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random()*(300 - 100)+100), "black", 3, 3));
     }
+
+    
+
+    background.update();
+    ctx.fillStyle = "red";
+    ctx.fillRect(300,100,40,40);
+    platform.update();
+    //player.newPos();
+    player.update();
 
     for(i = 0 ; i< obstacles.length ; i++){
         obstacles[i].x += 3;
         obstacles[i].update();
-    }*/
-
-    background.update();
-    platform.update();
-    //player.newPos();
-    player.update();
+    }
     
     //drawEverything();
 
 }
 
-function component(width, height, color, x, y) {
+function component(x, y, color, width, height) {
     this.width = width;
     this.height = height;
     this.color = color;
     this.x = x;
     this.y = y;
+    this.speedX = 0;
+    this.speedY = 0;
     this.update = function () {
+        //ctx = canv.getContext('2d');
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.width, this.height, this.x, this.y);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     };
     this.newPos = function() {
-        this.x += this.xv;
-        this.y += this.yv;        
+        this.x += this.speedX;
+        this.y += this.speedY;        
     }
 }
 
@@ -97,12 +105,11 @@ function drawEverything() {
     */
     background = new component(0, 0, "#3498db", 800, 600);
     background.update();
-    
 
     platform = new component(0, canv.height / 2, "#ecf0f1", canv.width, canv.height / 2)
     platform.update();
 
-    player = new component(px - 5, py - 20, "#f1c40f", 20, 20);
+    player = new component(200, 200, "#f1c40f", 20, -20);
     player.update();
 
     plat1 = new component(0, (canv.height / 2) - 100, "#ecf0f1", 100, 10);
